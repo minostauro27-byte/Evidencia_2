@@ -66,6 +66,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          debug: true
 
   deploy:
     name: Deploy to Server
