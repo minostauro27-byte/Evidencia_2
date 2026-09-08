@@ -41,6 +41,25 @@ services:
       - ./npm/letsencrypt:/etc/letsencrypt
     networks:
       - app_network
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime-kuma_data:/app/data
+    networks:
+      - app_network
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - app_network
 
 networks:
   app_network:
@@ -48,3 +67,4 @@ networks:
 
 volumes:
   db_data:
+  uptime-kuma_data:
