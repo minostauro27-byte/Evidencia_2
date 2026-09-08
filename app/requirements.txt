@@ -1,12 +1,14 @@
-blinker==1.9.0
-click==8.5.0
+# Dependencias de la Aplicación
 Flask==3.0.0
-iniconfig==2.3.0
-itsdangerous==2.2.0
+Werkzeug==3.1.8
 Jinja2==3.1.6
 MarkupSafe==3.0.3
+itsdangerous==2.2.0
+blinker==1.9.0
+click==8.5.0
 mysql-connector-python==9.1.0
-packaging==26.3
-pluggy==1.6.0
-pytest==7.4.3
-Werkzeug==3.1.8
+
+# Parches de seguridad requeridos por Trivy
+setuptools>=78.1.1
+msgpack>=1.2.1
+wheel>=0.48.0
