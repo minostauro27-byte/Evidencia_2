@@ -1,0 +1,52 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Entornos virtuales y testing ---
+venv/
+env/
+ENV/
+.env
+.venv
+.pytest_cache/
+.mypy_cache/
+.tox/
+.coverage
+htmlcov/
+
+# --- IDEs y Editores ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Docker y NPM (Nginx Proxy Manager) ---
+# Si decides persistir los datos de NPM localmente para pruebas, 
+# es mejor ignorar la carpeta de volúmenes para no subir datos sensibles al repo.
+npm/data/
+npm/letsencrypt/
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db

@@ -2,11 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Actualizamos setuptools y pip a nivel de sistema antes de instalar requirements
-RUN pip install --no-cache-dir --upgrade "pip>=24.0" "setuptools>=78.1.1" "wheel>=0.48.0"
+# 1. Actualización forzada del gestor y herramientas base
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools>=78.1.1 wheel
 
+# 2. Instalación de requisitos + parche específico para msgpack
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt && \
+    python -m pip install --no-cache-dir --upgrade "msgpack>=1.2.1" "setuptools>=78.1.1"
 
 COPY . .
 
