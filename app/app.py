@@ -2,8 +2,6 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-DB_PASSWORD = "SuperSecretPassword12345454!"
-
 @app.route('/')
 def health_check():
     return jsonify({
