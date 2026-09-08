@@ -1,7 +1,9 @@
-name: CI/CD Pipeline
+name: CI/CD & DevSecOps Pipeline
 
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -26,9 +28,50 @@ jobs:
       - name: Run Pytest
         run: pytest tests/test_app.py
 
+  sast-bandit:
+    name: SAST Code Audit (Bandit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit Scan
+        # El flag -r evalúa de forma recursiva; -ll reporta problemas de severidad media y alta
+        run: bandit -r app/ -ll
+
+  container-security-trivy:
+    name: Container Vulnerability Scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Build Docker Image locally
+        run: docker build -t flask_api:test ./app
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'flask_api:test'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
   deploy:
     name: Deploy to Server
-    needs: test
+    needs: [test, sast-bandit, container-security-trivy]
+    # Solo despliega si estamos en main y todos los análisis pasaron en verde
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH
@@ -38,12 +81,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Clona el repo si no existe, o actualiza si ya existe
             if [ ! -d "mi_proyecto_api" ]; then
               git clone https://github.com/${{ github.repository }}.git mi_proyecto_api
             fi
             cd mi_proyecto_api
             git pull origin main
-            
-            # Reconstruir y levantar contenedores
             docker compose up -d --build
